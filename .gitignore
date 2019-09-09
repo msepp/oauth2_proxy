@@ -38,3 +38,6 @@ _testmain.go
 # vi Dockerfile.dev
 # docker build -f Dockerfile.dev .
 Dockerfile.dev
+
+# skip project files from IntelliJ
+.idea
