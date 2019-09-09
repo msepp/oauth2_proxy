@@ -6,7 +6,12 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/bitly/go-simplejson"
+	"bytes"
+	"encoding/json"
+	"io/ioutil"
+	"time"
+
+	simplejson "github.com/bitly/go-simplejson"
 	"github.com/pusher/oauth2_proxy/pkg/apis/sessions"
 	"github.com/pusher/oauth2_proxy/pkg/logger"
 	"github.com/pusher/oauth2_proxy/pkg/requests"
@@ -127,4 +132,134 @@ func (p *AzureProvider) GetEmailAddress(s *sessions.SessionState) (string, error
 	}
 
 	return email, err
+}
+
+// Redeem provides a default implementation of the OAuth2 token redemption process
+func (p *AzureProvider) Redeem(redirectURL, code string) (s *sessions.SessionState, err error) {
+	if code == "" {
+		err = errors.New("missing code")
+		return
+	}
+
+	params := url.Values{}
+	params.Add("redirect_uri", redirectURL)
+	params.Add("client_id", p.ClientID)
+	params.Add("client_secret", p.ClientSecret)
+	params.Add("code", code)
+	params.Add("grant_type", "authorization_code")
+	if p.ProtectedResource != nil && p.ProtectedResource.String() != "" {
+		params.Add("resource", p.ProtectedResource.String())
+	}
+
+	var req *http.Request
+	req, err = http.NewRequest("POST", p.RedeemURL.String(), bytes.NewBufferString(params.Encode()))
+	if err != nil {
+		return
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	var resp *http.Response
+	resp, err = http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	var body []byte
+	body, err = ioutil.ReadAll(resp.Body)
+	_ = resp.Body.Close()
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		err = fmt.Errorf("got %d from %q %s", resp.StatusCode, p.RedeemURL.String(), body)
+		return
+	}
+
+	// blindly try json and x-www-form-urlencoded
+	var jsonResponse struct {
+		ExpiresIn    int64  `json:"expires_in,string"`
+		AccessToken  string `json:"access_token"`
+		RefreshToken string `json:"refresh_token"`
+	}
+
+	if err = json.Unmarshal(body, &jsonResponse); err != nil {
+		err = fmt.Errorf("decoding redeem response failed, %s", err)
+		return
+	}
+
+	s = &sessions.SessionState{
+		CreatedAt:    time.Now(),
+		ExpiresOn:    time.Now().Add(time.Duration(jsonResponse.ExpiresIn) * time.Second).Truncate(time.Second),
+		RefreshToken: jsonResponse.RefreshToken,
+		AccessToken:  jsonResponse.AccessToken,
+	}
+	return
+}
+
+// RefreshSessionIfNeeded checks if the session has expired and uses the
+// RefreshToken to fetch a new ID token if required
+func (p *AzureProvider) RefreshSessionIfNeeded(s *sessions.SessionState) (bool, error) {
+	if s == nil || s.ExpiresOn.After(time.Now()) || s.RefreshToken == "" {
+		return false, nil
+	}
+
+	newToken, newRefreshToken, duration, err := p.redeemRefreshToken(s.RefreshToken)
+	if err != nil {
+		logger.Printf("AZURE: redeem failed: %v", err)
+		return false, err
+	}
+
+	origExpiration := s.ExpiresOn
+	s.AccessToken = newToken
+	s.RefreshToken = newRefreshToken
+	s.ExpiresOn = time.Now().Add(duration).Truncate(time.Second)
+	logger.Printf("AZURE: refreshed access token (expired on %s, next: %s)", origExpiration, s.ExpiresOn)
+	return true, nil
+}
+
+func (p *AzureProvider) redeemRefreshToken(refreshToken string) (token string, newRefreshToken string, expires time.Duration, err error) {
+	// https://docs.microsoft.com/en-us/azure/active-directory/develop/v1-protocols-oauth-code
+	params := url.Values{}
+	params.Add("client_id", p.ClientID)
+	params.Add("client_secret", p.ClientSecret)
+	params.Add("refresh_token", refreshToken)
+	params.Add("grant_type", "refresh_token")
+	params.Add("resource", p.ProtectedResource.String())
+
+	var req *http.Request
+	req, err = http.NewRequest("POST", p.RedeemURL.String(), bytes.NewBufferString(params.Encode()))
+	if err != nil {
+		return
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return
+	}
+	var body []byte
+	body, err = ioutil.ReadAll(resp.Body)
+	_ = resp.Body.Close()
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		err = fmt.Errorf("got %d from %q %s", resp.StatusCode, p.RedeemURL.String(), body)
+		return
+	}
+
+	var data struct {
+		AccessToken  string `json:"access_token"`
+		RefreshToken string `json:"refresh_token"`
+		ExpiresIn    int64  `json:"expires_in,string"`
+	}
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		return
+	}
+	token = data.AccessToken
+	newRefreshToken = data.RefreshToken
+	expires = time.Duration(data.ExpiresIn) * time.Second
+	return
 }

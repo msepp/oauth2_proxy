@@ -12,9 +12,9 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/pusher/oauth2_proxy/pkg/apis/sessions"
-	"gopkg.in/square/go-jose.v2"
+	jose "gopkg.in/square/go-jose.v2"
 )
 
 // LoginGovProvider represents an OIDC based Identity Provider

@@ -15,7 +15,7 @@ import (
 	"time"
 
 	oidc "github.com/coreos/go-oidc"
-	"github.com/dgrijalva/jwt-go"
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/mbland/hmacauth"
 	"github.com/pusher/oauth2_proxy/pkg/apis/options"
 	sessionsapi "github.com/pusher/oauth2_proxy/pkg/apis/sessions"
@@ -23,7 +23,7 @@ import (
 	"github.com/pusher/oauth2_proxy/pkg/logger"
 	"github.com/pusher/oauth2_proxy/pkg/sessions"
 	"github.com/pusher/oauth2_proxy/providers"
-	"gopkg.in/natefinch/lumberjack.v2"
+	lumberjack "gopkg.in/natefinch/lumberjack.v2"
 )
 
 // Options holds Configuration Options that can be set by Command Line Flag,
