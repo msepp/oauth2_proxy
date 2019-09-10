@@ -4,7 +4,7 @@ import (
 	"html/template"
 	"path"
 
-	"github.com/pusher/oauth2_proxy/pkg/logger"
+	"github.com/msepp/oauth2_proxy/pkg/logger"
 )
 
 func loadTemplates(dir string) *template.Template {
@@ -143,7 +143,7 @@ func getTemplates() *template.Template {
 	<footer>
 	{{ if eq .Footer "-" }}
 	{{ else if eq .Footer ""}}
-	Secured with <a href="https://github.com/pusher/oauth2_proxy#oauth2_proxy">OAuth2 Proxy</a> version {{.Version}}
+	Secured with <a href="https://github.com/msepp/oauth2_proxy#oauth2_proxy">OAuth2 Proxy</a> version {{.Version}}
 	{{ else }}
 	{{.Footer}}
 	{{ end }}

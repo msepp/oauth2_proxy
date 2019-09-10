@@ -1,6 +1,6 @@
 package options
 
-import "github.com/pusher/oauth2_proxy/pkg/encryption"
+import "github.com/msepp/oauth2_proxy/pkg/encryption"
 
 // SessionOptions contains configuration options for the SessionStore providers.
 type SessionOptions struct {

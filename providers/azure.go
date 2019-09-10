@@ -12,9 +12,9 @@ import (
 	"time"
 
 	simplejson "github.com/bitly/go-simplejson"
-	"github.com/pusher/oauth2_proxy/pkg/apis/sessions"
-	"github.com/pusher/oauth2_proxy/pkg/logger"
-	"github.com/pusher/oauth2_proxy/pkg/requests"
+	"github.com/msepp/oauth2_proxy/pkg/apis/sessions"
+	"github.com/msepp/oauth2_proxy/pkg/logger"
+	"github.com/msepp/oauth2_proxy/pkg/requests"
 )
 
 // AzureProvider represents an Azure based Identity Provider
@@ -189,7 +189,7 @@ func (p *AzureProvider) Redeem(redirectURL, code string) (s *sessions.SessionSta
 
 	s = &sessions.SessionState{
 		CreatedAt:    time.Now(),
-		ExpiresOn:    time.Now().Add(time.Duration(jsonResponse.ExpiresIn) * time.Second).Truncate(time.Second),
+		ExpiresOn:    time.Now().Add(time.Duration(jsonResponse.ExpiresIn-300) * time.Second).Truncate(time.Second),
 		RefreshToken: jsonResponse.RefreshToken,
 		AccessToken:  jsonResponse.AccessToken,
 	}
@@ -203,21 +203,24 @@ func (p *AzureProvider) RefreshSessionIfNeeded(s *sessions.SessionState) (bool, 
 		return false, nil
 	}
 
-	newToken, newRefreshToken, duration, err := p.redeemRefreshToken(s.RefreshToken)
+	newSession, err := p.redeemRefreshToken(s.RefreshToken)
 	if err != nil {
 		logger.Printf("AZURE: redeem failed: %v", err)
 		return false, err
 	}
 
 	origExpiration := s.ExpiresOn
-	s.AccessToken = newToken
-	s.RefreshToken = newRefreshToken
-	s.ExpiresOn = time.Now().Add(duration).Truncate(time.Second)
+	s.AccessToken = newSession.AccessToken
+	s.RefreshToken = newSession.RefreshToken
+	s.Email = newSession.Email
+	s.CreatedAt = newSession.CreatedAt
+	s.ExpiresOn = newSession.ExpiresOn
+
 	logger.Printf("AZURE: refreshed access token (expired on %s, next: %s)", origExpiration, s.ExpiresOn)
 	return true, nil
 }
 
-func (p *AzureProvider) redeemRefreshToken(refreshToken string) (token string, newRefreshToken string, expires time.Duration, err error) {
+func (p *AzureProvider) redeemRefreshToken(refreshToken string) (*sessions.SessionState, error) {
 	// https://docs.microsoft.com/en-us/azure/active-directory/develop/v1-protocols-oauth-code
 	params := url.Values{}
 	params.Add("client_id", p.ClientID)
@@ -226,27 +229,30 @@ func (p *AzureProvider) redeemRefreshToken(refreshToken string) (token string, n
 	params.Add("grant_type", "refresh_token")
 	params.Add("resource", p.ProtectedResource.String())
 
-	var req *http.Request
+	var (
+		req *http.Request
+		err error
+	)
 	req, err = http.NewRequest("POST", p.RedeemURL.String(), bytes.NewBufferString(params.Encode()))
 	if err != nil {
-		return
+		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return
+		return nil, err
 	}
 	var body []byte
 	body, err = ioutil.ReadAll(resp.Body)
 	_ = resp.Body.Close()
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	if resp.StatusCode != 200 {
 		err = fmt.Errorf("got %d from %q %s", resp.StatusCode, p.RedeemURL.String(), body)
-		return
+		return nil, err
 	}
 
 	var data struct {
@@ -256,10 +262,19 @@ func (p *AzureProvider) redeemRefreshToken(refreshToken string) (token string, n
 	}
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		return
+		return nil, err
 	}
-	token = data.AccessToken
-	newRefreshToken = data.RefreshToken
-	expires = time.Duration(data.ExpiresIn) * time.Second
-	return
+
+	var s = &sessions.SessionState{
+		AccessToken:  data.AccessToken,
+		RefreshToken: data.RefreshToken,
+		ExpiresOn:    time.Now().Add(time.Duration(data.ExpiresIn-300) * time.Second).Truncate(time.Second),
+		CreatedAt:    time.Now(),
+	}
+
+	if s.Email, err = p.GetEmailAddress(s); err != nil {
+		return nil, err
+	}
+
+	return s, nil
 }

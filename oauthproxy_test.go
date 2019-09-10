@@ -18,10 +18,10 @@ import (
 
 	oidc "github.com/coreos/go-oidc"
 	"github.com/mbland/hmacauth"
-	"github.com/pusher/oauth2_proxy/pkg/apis/sessions"
-	"github.com/pusher/oauth2_proxy/pkg/logger"
-	"github.com/pusher/oauth2_proxy/pkg/sessions/cookie"
-	"github.com/pusher/oauth2_proxy/providers"
+	"github.com/msepp/oauth2_proxy/pkg/apis/sessions"
+	"github.com/msepp/oauth2_proxy/pkg/logger"
+	"github.com/msepp/oauth2_proxy/pkg/sessions/cookie"
+	"github.com/msepp/oauth2_proxy/providers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/net/websocket"
@@ -1333,5 +1333,5 @@ func TestFindJwtBearerToken(t *testing.T) {
 		assert.Error(t, err)
 	}
 
-	fmt.Printf("%s", token)
+	//fmt.Printf("%s", token)
 }

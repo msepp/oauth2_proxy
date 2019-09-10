@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pusher/oauth2_proxy/pkg/apis/sessions"
+	"github.com/msepp/oauth2_proxy/pkg/apis/sessions"
 	"github.com/stretchr/testify/assert"
 )
 

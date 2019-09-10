@@ -7,8 +7,8 @@ import (
 	"time"
 
 	oidc "github.com/coreos/go-oidc"
-	"github.com/pusher/oauth2_proxy/pkg/apis/sessions"
-	"github.com/pusher/oauth2_proxy/pkg/requests"
+	"github.com/msepp/oauth2_proxy/pkg/apis/sessions"
+	"github.com/msepp/oauth2_proxy/pkg/requests"
 
 	"golang.org/x/oauth2"
 )

@@ -17,12 +17,12 @@ import (
 	oidc "github.com/coreos/go-oidc"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/mbland/hmacauth"
-	"github.com/pusher/oauth2_proxy/pkg/apis/options"
-	sessionsapi "github.com/pusher/oauth2_proxy/pkg/apis/sessions"
-	"github.com/pusher/oauth2_proxy/pkg/encryption"
-	"github.com/pusher/oauth2_proxy/pkg/logger"
-	"github.com/pusher/oauth2_proxy/pkg/sessions"
-	"github.com/pusher/oauth2_proxy/providers"
+	"github.com/msepp/oauth2_proxy/pkg/apis/options"
+	sessionsapi "github.com/msepp/oauth2_proxy/pkg/apis/sessions"
+	"github.com/msepp/oauth2_proxy/pkg/encryption"
+	"github.com/msepp/oauth2_proxy/pkg/logger"
+	"github.com/msepp/oauth2_proxy/pkg/sessions"
+	"github.com/msepp/oauth2_proxy/providers"
 	lumberjack "gopkg.in/natefinch/lumberjack.v2"
 )
 
