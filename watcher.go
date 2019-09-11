@@ -13,8 +13,7 @@ import (
 
 // WaitForReplacement waits for a file to exist on disk and then starts a watch
 // for the file
-func WaitForReplacement(filename string, op fsnotify.Op,
-	watcher *fsnotify.Watcher) {
+func WaitForReplacement(filename string, op fsnotify.Op, watcher *fsnotify.Watcher) {
 	const sleepInterval = 50 * time.Millisecond
 
 	// Avoid a race when fsnofity.Remove is preceded by fsnotify.Chmod.
@@ -52,7 +51,8 @@ func WatchForUpdates(filename string, done <-chan bool, action func()) {
 				// If the Remove wins, the action() (which calls
 				// UserMap.LoadAuthenticatedEmailsFile()) crashes when the file
 				// can't be opened.
-				if event.Op&(fsnotify.Remove|fsnotify.Rename|fsnotify.Chmod) != 0 {
+				// On darwin a rename actually does Remove + Create, so we need to be aware of that as well.
+				if event.Op&(fsnotify.Remove|fsnotify.Create|fsnotify.Rename|fsnotify.Chmod) != 0 {
 					logger.Printf("watching interrupted on event: %s", event)
 					watcher.Remove(filename)
 					WaitForReplacement(filename, event.Op, watcher)
