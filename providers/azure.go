@@ -93,6 +93,23 @@ func getEmailFromJSON(json *simplejson.Json) (string, error) {
 	return email, err
 }
 
+// GetLoginURL with Azure specific OAuth2 parameters
+func (p *AzureProvider) GetLoginURL(redirectURI, state string) string {
+	var a url.URL
+	a = *p.LoginURL
+	params, _ := url.ParseQuery(a.RawQuery)
+	params.Set("redirect_uri", redirectURI)
+	params.Add("scope", p.Scope)
+	params.Set("client_id", p.ClientID)
+	params.Set("response_type", "code")
+	params.Add("state", state)
+	if p.ApprovalPrompt != "" {
+		params.Set("prompt", p.ApprovalPrompt) // Azure uses "prompt" instead of "approval_prompt"
+	}
+	a.RawQuery = params.Encode()
+	return a.String()
+}
+
 // GetEmailAddress returns the Account email address
 func (p *AzureProvider) GetEmailAddress(s *sessions.SessionState) (string, error) {
 	var email string
@@ -134,7 +151,7 @@ func (p *AzureProvider) GetEmailAddress(s *sessions.SessionState) (string, error
 	return email, err
 }
 
-// Redeem provides a default implementation of the OAuth2 token redemption process
+// Redeem an Azure OAuth2 token
 func (p *AzureProvider) Redeem(redirectURL, code string) (s *sessions.SessionState, err error) {
 	if code == "" {
 		err = errors.New("missing code")
