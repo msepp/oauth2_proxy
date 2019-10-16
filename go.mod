@@ -1,4 +1,4 @@
-module github.com/msepp/oauth2_proxy/v4
+module github.com/msepp/oauth2_proxy
 
 go 1.12
 
