@@ -10,8 +10,8 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/msepp/oauth2_proxy/pkg/apis/sessions"
-	"github.com/msepp/oauth2_proxy/pkg/encryption"
+	"github.com/msepp/oauth2_proxy/v4/pkg/apis/sessions"
+	"github.com/msepp/oauth2_proxy/v4/pkg/encryption"
 )
 
 // Redeem provides a default implementation of the OAuth2 token redemption process

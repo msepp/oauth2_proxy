@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/msepp/oauth2_proxy/pkg/apis/sessions"
-	"github.com/msepp/oauth2_proxy/pkg/requests"
+	"github.com/msepp/oauth2_proxy/v4/pkg/apis/sessions"
+	"github.com/msepp/oauth2_proxy/v4/pkg/requests"
 )
 
 // LinkedInProvider represents an LinkedIn based Identity Provider

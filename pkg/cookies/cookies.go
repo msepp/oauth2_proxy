@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/msepp/oauth2_proxy/pkg/apis/options"
-	"github.com/msepp/oauth2_proxy/pkg/logger"
+	"github.com/msepp/oauth2_proxy/v4/pkg/apis/options"
+	"github.com/msepp/oauth2_proxy/v4/pkg/logger"
 )
 
 // MakeCookie constructs a cookie from the given parameters,

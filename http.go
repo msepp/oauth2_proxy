@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/msepp/oauth2_proxy/pkg/logger"
+	"github.com/msepp/oauth2_proxy/v4/pkg/logger"
 )
 
 // Server represents an HTTP server

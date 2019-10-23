@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/msepp/oauth2_proxy/pkg/logger"
-	"github.com/msepp/oauth2_proxy/pkg/requests"
+	"github.com/msepp/oauth2_proxy/v4/pkg/logger"
+	"github.com/msepp/oauth2_proxy/v4/pkg/requests"
 )
 
 // stripToken is a helper function to obfuscate "access_token"

@@ -4,7 +4,7 @@ import (
 	"html/template"
 	"path"
 
-	"github.com/msepp/oauth2_proxy/pkg/logger"
+	"github.com/msepp/oauth2_proxy/v4/pkg/logger"
 )
 
 func loadTemplates(dir string) *template.Template {

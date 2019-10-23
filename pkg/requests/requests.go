@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	simplejson "github.com/bitly/go-simplejson"
-	"github.com/msepp/oauth2_proxy/pkg/logger"
+	"github.com/msepp/oauth2_proxy/v4/pkg/logger"
 )
 
 // Request parses the request body into a simplejson.Json object

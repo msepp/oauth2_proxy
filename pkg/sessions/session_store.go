@@ -3,10 +3,10 @@ package sessions
 import (
 	"fmt"
 
-	"github.com/msepp/oauth2_proxy/pkg/apis/options"
-	"github.com/msepp/oauth2_proxy/pkg/apis/sessions"
-	"github.com/msepp/oauth2_proxy/pkg/sessions/cookie"
-	"github.com/msepp/oauth2_proxy/pkg/sessions/redis"
+	"github.com/msepp/oauth2_proxy/v4/pkg/apis/options"
+	"github.com/msepp/oauth2_proxy/v4/pkg/apis/sessions"
+	"github.com/msepp/oauth2_proxy/v4/pkg/sessions/cookie"
+	"github.com/msepp/oauth2_proxy/v4/pkg/sessions/redis"
 )
 
 // NewSessionStore creates a SessionStore from the provided configuration

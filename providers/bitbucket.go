@@ -5,9 +5,9 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/msepp/oauth2_proxy/pkg/apis/sessions"
-	"github.com/msepp/oauth2_proxy/pkg/logger"
-	"github.com/msepp/oauth2_proxy/pkg/requests"
+	"github.com/msepp/oauth2_proxy/v4/pkg/apis/sessions"
+	"github.com/msepp/oauth2_proxy/v4/pkg/logger"
+	"github.com/msepp/oauth2_proxy/v4/pkg/requests"
 )
 
 // BitbucketProvider represents an Bitbucket based Identity Provider

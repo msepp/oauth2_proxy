@@ -12,9 +12,9 @@ import (
 	"time"
 
 	simplejson "github.com/bitly/go-simplejson"
-	"github.com/msepp/oauth2_proxy/pkg/apis/sessions"
-	"github.com/msepp/oauth2_proxy/pkg/logger"
-	"github.com/msepp/oauth2_proxy/pkg/requests"
+	"github.com/msepp/oauth2_proxy/v4/pkg/apis/sessions"
+	"github.com/msepp/oauth2_proxy/v4/pkg/logger"
+	"github.com/msepp/oauth2_proxy/v4/pkg/requests"
 )
 
 // AzureProvider represents an Azure based Identity Provider

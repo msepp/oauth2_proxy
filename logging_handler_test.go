@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/msepp/oauth2_proxy/pkg/logger"
+	"github.com/msepp/oauth2_proxy/v4/pkg/logger"
 )
 
 func TestLoggingHandler_ServeHTTP(t *testing.T) {

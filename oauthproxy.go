@@ -17,10 +17,10 @@ import (
 
 	oidc "github.com/coreos/go-oidc"
 	"github.com/mbland/hmacauth"
-	sessionsapi "github.com/msepp/oauth2_proxy/pkg/apis/sessions"
-	"github.com/msepp/oauth2_proxy/pkg/encryption"
-	"github.com/msepp/oauth2_proxy/pkg/logger"
-	"github.com/msepp/oauth2_proxy/providers"
+	sessionsapi "github.com/msepp/oauth2_proxy/v4/pkg/apis/sessions"
+	"github.com/msepp/oauth2_proxy/v4/pkg/encryption"
+	"github.com/msepp/oauth2_proxy/v4/pkg/logger"
+	"github.com/msepp/oauth2_proxy/v4/providers"
 	"github.com/yhat/wsutil"
 )
 

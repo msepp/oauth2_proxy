@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/msepp/oauth2_proxy/pkg/logger"
+	"github.com/msepp/oauth2_proxy/v4/pkg/logger"
 )
 
 // responseLogger is wrapper of http.ResponseWriter that keeps track of its HTTP status
