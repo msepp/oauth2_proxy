@@ -11,6 +11,8 @@ import (
 	"io/ioutil"
 	"time"
 
+	"log"
+
 	simplejson "github.com/bitly/go-simplejson"
 	"github.com/msepp/oauth2_proxy/v4/pkg/apis/sessions"
 	"github.com/msepp/oauth2_proxy/v4/pkg/logger"
@@ -216,7 +218,13 @@ func (p *AzureProvider) Redeem(redirectURL, code string) (s *sessions.SessionSta
 // RefreshSessionIfNeeded checks if the session has expired and uses the
 // RefreshToken to fetch a new ID token if required
 func (p *AzureProvider) RefreshSessionIfNeeded(s *sessions.SessionState) (bool, error) {
+	if s != nil {
+		log.Printf("RefreshSessionIfNeeded: refresh_token_len: %d, expires_on: %v, after: %t", len(s.RefreshToken), s.ExpiresOn, s.ExpiresOn.After(time.Now()))
+	} else {
+		log.Println("RefreshSessionIfNeeded: session is nil!")
+	}
 	if s == nil || s.ExpiresOn.After(time.Now()) || s.RefreshToken == "" {
+		log.Println("RefreshSessionIfNeeded: should not refresh!")
 		return false, nil
 	}
 
@@ -288,6 +296,8 @@ func (p *AzureProvider) redeemRefreshToken(refreshToken string) (*sessions.Sessi
 		ExpiresOn:    time.Now().Add(time.Duration(data.ExpiresIn-300) * time.Second).Truncate(time.Second),
 		CreatedAt:    time.Now(),
 	}
+
+	log.Printf("refresh_token len: %d, expires_on: %v", len(s.RefreshToken), s.ExpiresOn)
 
 	if s.Email, err = p.GetEmailAddress(s); err != nil {
 		return nil, err
