@@ -17,7 +17,7 @@ distclean: clean
 
 .PHONY: lint
 lint:
-	GO111MODULE=on $(GOLANGCILINT) run
+	$(GOLANGCILINT) run
 
 .PHONY: build
 build: clean $(BINARY)
@@ -55,7 +55,7 @@ $(BINARY):
 
 .PHONY: test
 test: lint
-	GO111MODULE=on $(GO) test -v -race ./...
+	$(GO) test -v -race ./...
 
 .PHONY: release
 release: lint test

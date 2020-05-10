@@ -1,17 +1,15 @@
 package providers
 
 import (
-	"errors"
-	"fmt"
-	"net/http"
-	"net/url"
-
 	"bytes"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io/ioutil"
-	"time"
-
 	"log"
+	"net/http"
+	"net/url"
+	"time"
 
 	simplejson "github.com/bitly/go-simplejson"
 	"github.com/msepp/oauth2_proxy/v4/pkg/apis/sessions"
@@ -31,16 +29,15 @@ func NewAzureProvider(p *ProviderData) *AzureProvider {
 
 	if p.ProfileURL == nil || p.ProfileURL.String() == "" {
 		p.ProfileURL = &url.URL{
-			Scheme:   "https",
-			Host:     "graph.windows.net",
-			Path:     "/me",
-			RawQuery: "api-version=1.6",
+			Scheme: "https",
+			Host:   "graph.microsoft.com",
+			Path:   "/v1.0/me",
 		}
 	}
 	if p.ProtectedResource == nil || p.ProtectedResource.String() == "" {
 		p.ProtectedResource = &url.URL{
 			Scheme: "https",
-			Host:   "graph.windows.net",
+			Host:   "graph.microsoft.com",
 		}
 	}
 	if p.Scope == "" {
