@@ -40,9 +40,9 @@ func TestAzureProviderDefaults(t *testing.T) {
 		p.Data().LoginURL.String())
 	assert.Equal(t, "https://login.microsoftonline.com/common/oauth2/token",
 		p.Data().RedeemURL.String())
-	assert.Equal(t, "https://graph.microsoft.com/v1.0/me",
+	assert.Equal(t, "https://graph.windows.net/me?api-version=1.6",
 		p.Data().ProfileURL.String())
-	assert.Equal(t, "https://graph.microsoft.com",
+	assert.Equal(t, "https://graph.windows.net",
 		p.Data().ProtectedResource.String())
 	assert.Equal(t, "",
 		p.Data().ValidateURL.String())
@@ -96,9 +96,9 @@ func TestAzureSetTenant(t *testing.T) {
 		p.Data().LoginURL.String())
 	assert.Equal(t, "https://login.microsoftonline.com/example/oauth2/token",
 		p.Data().RedeemURL.String())
-	assert.Equal(t, "https://graph.microsoft.com/v1.0/me",
+	assert.Equal(t, "https://graph.windows.net/me?api-version=1.6",
 		p.Data().ProfileURL.String())
-	assert.Equal(t, "https://graph.microsoft.com",
+	assert.Equal(t, "https://graph.windows.net",
 		p.Data().ProtectedResource.String())
 	assert.Equal(t, "",
 		p.Data().ValidateURL.String())
@@ -106,11 +106,12 @@ func TestAzureSetTenant(t *testing.T) {
 }
 
 func testAzureBackend(payload string) *httptest.Server {
-	path := "/v1.0/me"
+	path := "/me"
+	query := "api-version=1.6"
 
 	return httptest.NewServer(http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			if r.URL.Path != path && r.Method != http.MethodPost {
+			if (r.URL.Path != path || r.URL.RawQuery != query) && r.Method != http.MethodPost {
 				w.WriteHeader(404)
 			} else if r.Header.Get("Authorization") != "Bearer imaginary_access_token" {
 				w.WriteHeader(403)
